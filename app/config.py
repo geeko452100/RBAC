@@ -3,6 +3,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     # Get the url
     DATABASE_URL: str
+    SECRET_KEY: str
 
     # Tell pydantic to look for for an external `.env` file
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
