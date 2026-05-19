@@ -19,7 +19,4 @@ AsyncSessionLocal = async_sessionmaker(
 # Injectable Database Session
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
     async with AsyncSessionLocal() as session:
-        try: 
-            yield session
-        finally:
-            await session.close()
+        yield session
