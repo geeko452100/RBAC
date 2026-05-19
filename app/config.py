@@ -4,6 +4,7 @@ class Settings(BaseSettings):
     # Get the url
     DATABASE_URL: str
     SECRET_KEY: str
+    ACCESS_TKN_EXPRY: int
 
     # Tell pydantic to look for for an external `.env` file
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
