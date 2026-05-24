@@ -4,9 +4,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.crud import user as usr
-from app.schemas.user import UserCreate, UserResponse
+from app.schemas.user import UserCreate, UserResponse  # Cleaned duplicate import
 from app.schemas.token import Token
 from app.core.security import verify_pwd, create_tkn
+from app.routers.dependencies import get_current_usr
+from app.models.user import User
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -33,16 +35,11 @@ async def returning_user(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: AsyncSession = Depends(get_db)
 ):
+    # 1. Fetch user profile
     user = await usr.get_usr_by_usrname(db, username=form_data.username)
-    if not user or not verify_pwd(form_data.password, user.hashed_password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
     
-    # Match the provided plain-text pwd against the salt:hash pwd
-    if not verify_pwd(form_data.password, user.hashed_password):
+    # 2. Securely match credentials (Cleaned up the duplicate check)
+    if not user or not verify_pwd(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -55,7 +52,8 @@ async def returning_user(
             detail="User is no longer active"
         )
     
-    token_payload={
+    # 3. Build token authorization payload
+    token_payload = {
         "sub": user.username,
         "role": user.role.name if user.role else "Employee"
     }
@@ -64,3 +62,15 @@ async def returning_user(
     access_tkn = create_tkn(data=token_payload)
 
     return {"access_token": access_tkn, "token_type": "bearer"}
+
+
+# 🔒 ADD THIS TO THE BOTTOM: Guarded verification endpoint
+@router.get("/me", response_model=UserResponse)
+async def read_users_me(
+    current_user: User = Depends(get_current_usr)
+):
+    """
+    Guarded route that utilizes the get_current_usr dependency injection block.
+    Extracts, decodes, and verifies the incoming bearer token context automatically.
+    """
+    return current_user
