@@ -7,8 +7,8 @@ from app.crud import user as usr
 from app.schemas.user import UserCreate, UserResponse  # Cleaned duplicate import
 from app.schemas.token import Token
 from app.core.security import verify_pwd, create_tkn
-from app.routers.dependencies import get_current_usr
 from app.models.user import User
+from app.routers.gatekeeper import PermissionChecker
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -67,7 +67,7 @@ async def returning_user(
 # 🔒 ADD THIS TO THE BOTTOM: Guarded verification endpoint
 @router.get("/me", response_model=UserResponse)
 async def read_users_me(
-    current_user: User = Depends(get_current_usr)
+    current_user: User = Depends(PermissionChecker("user:read"))
 ):
     """
     Guarded route that utilizes the get_current_usr dependency injection block.
