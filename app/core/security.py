@@ -1,8 +1,7 @@
 from datetime import datetime, timedelta, timezone
-import jwt
-from passlib.context import CryptContext
 import hashlib
 import secrets
+import jwt 
 from app.config import settings
 
 SECRET_KEY = settings.SECRET_KEY
@@ -25,7 +24,7 @@ def verify_pwd(plain_pwd: str, hash_pwd: str) -> bool:
     # Verify an incoming password against the stored salt:hash string
     try:
         # Split the stored string back into the original salt:hash
-        salt, stored_hash = hash_pwd(":")
+        salt, stored_hash = hash_pwd.split(":")
 
         pwd_bytes = plain_pwd.encode("utf-8")
         # Hash the incoming logic passwd using the very same salt

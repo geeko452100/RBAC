@@ -8,13 +8,13 @@ class UserBase(BaseModel):
 # The User model for creating a new user
 class UserCreate(UserBase):
     password: str
-    role_id: int
+    role_id: int=1
 
 # The User model for retrieving permissions 
 class UserResponse(UserBase):
     id: int
     is_active: bool
-    # role_id: int
+    role_id: int
 
     class Config:
         from_attributes = True # Parse the SQLAlchemy Objects

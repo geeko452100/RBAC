@@ -6,8 +6,6 @@ from sqlalchemy.ext.asyncio import create_async_engine
 # 1. Import your dynamic settings and master metadata registry
 from app.config import settings
 from app.models.base import Base
-
-# 2. Crucial: Explicitly import your models so Alembic can see them!
 from app.models.role import Role, Permission
 from app.models.user import User
 
