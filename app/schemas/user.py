@@ -8,7 +8,7 @@ class UserBase(BaseModel):
 # The User model for creating a new user
 class UserCreate(UserBase):
     password: str
-    # role_id: int = 1 # Default value 1 so a user doesn't have to provide it manually
+    role_id: int
 
 # The User model for retrieving permissions 
 class UserResponse(UserBase):

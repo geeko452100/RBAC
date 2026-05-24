@@ -33,7 +33,7 @@ class Role(Base):
     )
 
     # Increase awareness of users in role increasing efficiency, and preventing accidental or malicious deletions
-    """users: Mapped[list["User"]] = relationship(
+    users: Mapped[list["User"]] = relationship(
         back_populates="role",
         passive_deletes=True
-    )"""
+    )
