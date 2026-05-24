@@ -5,16 +5,16 @@ class UserBase(BaseModel):
     username: str
     email: EmailStr
 
-# The User model for creating permissions
+# The User model for creating a new user
 class UserCreate(UserBase):
     password: str
-    role_id: int # Assign every user a unique ID to thier specific role
+    # role_id: int = 1 # Default value 1 so a user doesn't have to provide it manually
 
 # The User model for retrieving permissions 
 class UserResponse(UserBase):
     id: int
     is_active: bool
-    role_id: int
+    # role_id: int
 
     class Config:
         from_attributes = True # Parse the SQLAlchemy Objects

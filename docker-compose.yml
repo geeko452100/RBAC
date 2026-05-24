@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+
+# Database Container
+  db: 
+    image: postgres:15-alpine
+    container_name: Hr_management_db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: H3ll0_W0rlD!
+      POSTGRES_DB: Hr_database
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+# Fast API Application Container
+  web:
+    build: .
+    container_name: Hr_management_api
+    ports: 
+      - "8000:8000"
+    volumes:
+      - .:/code
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+# Define the virtual hard drive where Postgres saves the data
+volumes:
+  postgres_data:

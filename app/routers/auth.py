@@ -10,9 +10,26 @@ from app.core.security import verify_pwd, create_tkn
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
-# Login endpoint
+# Register a fresh recruit, assigning them a base role ID 
+@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+async def new_user(
+    user_in: UserCreate,
+    db: AsyncSession = Depends(get_db)
+):
+    # Check to ensure the username doesn't already exist
+    existing_user = await usr.get_usr_by_usrname(db, username=user_in.username)
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username already exists."
+        )
+    
+    # Upload the user's credentials to the database  
+    return await usr.create_user(db=db, user_in=user_in)
+
+# Endpoint to allow current employees to login 
 @router.post("/login", response_model=Token)
-async def login_for_access_token(
+async def returning_user(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: AsyncSession = Depends(get_db)
 ):
@@ -28,4 +45,3 @@ async def login_for_access_token(
     access_tkn = create_tkn(data={"sub": user.username})
 
     return Token(access_token=access_tkn, token_type="bearer")
-
