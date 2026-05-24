@@ -7,4 +7,4 @@ pydantic[email]==2.6.4
 passlib[bcrypt]==1.7.4
 pydantic_settings
 python-multipart
-jwt
+pyJWT

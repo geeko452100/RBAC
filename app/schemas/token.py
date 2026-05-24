@@ -7,4 +7,4 @@ class Token(BaseModel):
 
 # Blueprint to define the token's id for the user
 class TokenData(BaseModel):
-    user_id: int | None = None
+    username: str | None = None # Changed to easier to remember username

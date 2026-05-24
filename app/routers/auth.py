@@ -41,7 +41,26 @@ async def returning_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    # Generate and return signed JWT token
-    access_tkn = create_tkn(data={"sub": user.username})
+    # Match the provided plain-text pwd against the salt:hash pwd
+    if not verify_pwd(form_data.password, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
-    return Token(access_token=access_tkn, token_type="bearer")
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User is no longer active"
+        )
+    
+    token_payload={
+        "sub": user.username,
+        "role": user.role.name if user.role else "Employee"
+    }
+    
+    # Generate and return signed JWT token
+    access_tkn = create_tkn(data=token_payload)
+
+    return {"access_token": access_tkn, "token_type": "bearer"}
